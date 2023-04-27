@@ -16,12 +16,27 @@ public class WarriorPosesController {
         @Autowired
         WarriorPoseRepository warriorPoseRepository;
 
-        @GetMapping("/")
-        public Iterable<WarriorPose> getAllWarriorPoses() {
-            return warriorPoseRepository.findAll();
+    @GetMapping("/")
+    public Iterable<WarriorPose> getAllWarriorPoses() {
+        return warriorPoseRepository.findAll();
+    }
+
+    @GetMapping("/search/{keyword}")
+    public ResponseEntity<WarriorPose> getWarriorPoseById(@PathVariable String keyword) {
+        Optional<WarriorPose> warriorPose = warriorPoseRepository.findByNameIgnoreCaseContaining(keyword);
+        if (warriorPose.isPresent()) {
+            return ResponseEntity.ok(warriorPose.get());
+        } else {
+            return ResponseEntity.notFound().build();
         }
 
-        @GetMapping("/{id}")
+    }
+
+        @GetMapping("/search/variation/{keyword}")
+    public Optional<WarriorPose> searchWarriorPoseByVariationName(@PathVariable String keyword) {
+        return warriorPoseRepository.findByVariationNameIgnoreCaseContaining(keyword);
+    }
+    @GetMapping("/{id}")
         public ResponseEntity<WarriorPose> getWarriorPoseById(@PathVariable Long id) {
             Optional<WarriorPose> warriorPose = warriorPoseRepository.findById(id);
             if (warriorPose.isPresent()) {
