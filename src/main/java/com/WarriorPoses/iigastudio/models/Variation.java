@@ -18,6 +18,6 @@ public class Variation {
     private String name;
     @ManyToOne
     @JsonIgnore
-    @JoinColumn(name="YogaPose_id", nullable=false)
+    @JoinColumn(name="WarriorPose_id", nullable=false)
     private WarriorPose warriorPose;
 }

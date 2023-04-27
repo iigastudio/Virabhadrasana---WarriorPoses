@@ -17,30 +17,30 @@ public class WarriorPosesController {
         WarriorPoseRepository warriorPoseRepository;
 
         @GetMapping("/")
-        public Iterable<WarriorPose> getAllYogaPoses() {
+        public Iterable<WarriorPose> getAllWarriorPoses() {
             return warriorPoseRepository.findAll();
         }
 
         @GetMapping("/{id}")
-        public ResponseEntity<WarriorPose> getYogaPoseById(@PathVariable Long id) {
-            Optional<WarriorPose> yogaPose = warriorPoseRepository.findById(id);
-            if (yogaPose.isPresent()) {
-                return ResponseEntity.ok(yogaPose.get());
+        public ResponseEntity<WarriorPose> getWarriorPoseById(@PathVariable Long id) {
+            Optional<WarriorPose> warriorPose = warriorPoseRepository.findById(id);
+            if (warriorPose.isPresent()) {
+                return ResponseEntity.ok(warriorPose.get());
             } else {
                 return ResponseEntity.notFound().build();
             }
         }
 
         @PostMapping("/")
-        public WarriorPose createYogaPose(@RequestBody WarriorPose warriorPose) {
+        public WarriorPose createWarriorPose(@RequestBody WarriorPose warriorPose) {
             return warriorPoseRepository.save(warriorPose);
         }
 
         @PutMapping("/{id}")
-        public ResponseEntity<WarriorPose> updateYogaPose(@PathVariable Long id, @RequestBody WarriorPose warriorPose) {
-            Optional<WarriorPose> optionalYogaPose = warriorPoseRepository.findById(id);
-            if (optionalYogaPose.isPresent()) {
-                WarriorPose dbWarriorPose = optionalYogaPose.get();
+        public ResponseEntity<WarriorPose> updateWarriorPose(@PathVariable Long id, @RequestBody WarriorPose warriorPose) {
+            Optional<WarriorPose> optionalWarriorPose = warriorPoseRepository.findById(id);
+            if (optionalWarriorPose.isPresent()) {
+                WarriorPose dbWarriorPose = optionalWarriorPose.get();
                 dbWarriorPose.setName(warriorPose.getName());
                 warriorPoseRepository.save(dbWarriorPose);
                 return ResponseEntity.ok(dbWarriorPose);
@@ -50,10 +50,10 @@ public class WarriorPosesController {
         }
 
         @DeleteMapping("/{id}")
-        public ResponseEntity<?> deleteYogaPose(@PathVariable Long id) {
-            Optional<WarriorPose> optionalYogaPose = warriorPoseRepository.findById(id);
-            if (optionalYogaPose.isPresent()) {
-                warriorPoseRepository.delete(optionalYogaPose.get());
+        public ResponseEntity<?> deleteWarriorPose(@PathVariable Long id) {
+            Optional<WarriorPose> optionalWarriorPose = warriorPoseRepository.findById(id);
+            if (optionalWarriorPose.isPresent()) {
+                warriorPoseRepository.delete(optionalWarriorPose.get());
                 return ResponseEntity.ok().build();
             } else {
                 return ResponseEntity.notFound().build();

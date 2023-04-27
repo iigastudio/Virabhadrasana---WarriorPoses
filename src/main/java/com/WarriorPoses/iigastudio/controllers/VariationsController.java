@@ -36,11 +36,11 @@ public class VariationsController {
         }
     }
 
-    @PostMapping("/{yogaPoseId}")
-    public ResponseEntity<Variation> createVariation(@PathVariable Long yogaPoseId, @RequestBody Variation variation) {
-        Optional<WarriorPose> optionalYogaPose = warriorPoseRepository.findById(yogaPoseId);
-        if (optionalYogaPose.isPresent()) {
-            WarriorPose warriorPose = optionalYogaPose.get();
+    @PostMapping("/{warriorPoseId}")
+    public ResponseEntity<Variation> createVariation(@PathVariable Long warriorPoseId, @RequestBody Variation variation) {
+        Optional<WarriorPose> optionalWarriorPose = warriorPoseRepository.findById(warriorPoseId);
+        if (optionalWarriorPose.isPresent()) {
+            WarriorPose warriorPose = optionalWarriorPose.get();
             variation.setWarriorPose(warriorPose);
             Set<Variation> variations = warriorPose.getVariations();
             variations.add(variation);
