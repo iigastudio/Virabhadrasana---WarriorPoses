@@ -9,15 +9,18 @@ import java.util.Set;
 @Getter
 @Setter
 @AllArgsConstructor
-@NoArgsConstructor(access = AccessLevel.PRIVATE, force = true)
-
+@NoArgsConstructor(access = AccessLevel.PUBLIC) // Update the access level of the constructor
 public class WarriorPose {
-
     @Id
     @GeneratedValue
     private Long id;
 
     private String name;
-    @OneToMany(mappedBy="warriorPose")
+    private String description;
+
+    @OneToMany(mappedBy = "warriorPose")
     private Set<Variation> variations;
-}
+
+    @Transient
+    private String imageUrl; // New transient field for image URL
+ }

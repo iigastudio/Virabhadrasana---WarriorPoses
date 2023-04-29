@@ -35,14 +35,11 @@ public class User implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        System.out.println("ROLE SELECTED "+userRole);
-        return List.of(new SimpleGrantedAuthority("ROLE_"+userRole));
-
-       /* if (userRole.equals("admin")) {
+        if (userRole.equals("ADMIN")) {
             return List.of(new SimpleGrantedAuthority("ROLE_USER"),
                     new SimpleGrantedAuthority("ROLE_ADMIN"));
         }
-        return List.of(new SimpleGrantedAuthority("ROLE_USER"));*/
+        return List.of(new SimpleGrantedAuthority("ROLE_USER"));
     }
     @Override
     public boolean isAccountNonExpired() {

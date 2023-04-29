@@ -6,6 +6,7 @@ import com.WarriorPoses.iigastudio.repositories.UserRepository;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -45,7 +46,9 @@ public class SecurityConfig {
                 .authorizeRequests((requests) -> requests
                         .requestMatchers(toH2Console()).permitAll()
                         .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
-                        .requestMatchers(new AntPathRequestMatcher("*")).hasAnyRole("USER", "ADMIN", "EMPLOYEE")
+                        .requestMatchers(HttpMethod.POST, "/variations/.*").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/variations/.*").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/variations/.*").hasRole("ADMIN")
                         .anyRequest().permitAll())
                 .cors()
                 .and()

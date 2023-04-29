@@ -7,17 +7,21 @@ import lombok.*;
 @Entity
 @Getter
 @Setter
-@NoArgsConstructor(access = AccessLevel.PRIVATE, force = true)
+@NoArgsConstructor(access = AccessLevel.PUBLIC) // Update the access level of the constructor
 @AllArgsConstructor
 public class Variation {
-
     @Id
     @GeneratedValue
     private Long id;
 
     private String name;
+    private String description;
+
     @ManyToOne
     @JsonIgnore
-    @JoinColumn(name="WarriorPose_id", nullable=false)
+    @JoinColumn(name = "WarriorPose_id", nullable = false)
     private WarriorPose warriorPose;
-}
+
+    @Transient
+    private String imageUrl; // New transient field for image URL
+ }
