@@ -67,7 +67,8 @@ public class VariationsController {
             try {
                 // Save the image to a folder or a cloud storage service
                 String imageName = imageFile.getOriginalFilename();
-                String imagePath = "src/main/resources/images/" + imageName;
+                String projectDir = System.getProperty("user.dir");
+                String imagePath = projectDir + "/images/" + imageName;
                 Path destination = Path.of(imagePath);
                 Files.copy(imageFile.getInputStream(), destination, StandardCopyOption.REPLACE_EXISTING);
 
@@ -100,24 +101,41 @@ public class VariationsController {
         }
     }
     @PutMapping("/{id}")
-    public ResponseEntity<Variation> updateVariation(HttpServletRequest request,@PathVariable Long id, @RequestBody Variation variation) {
+    public ResponseEntity<Variation> updateVariation(HttpServletRequest request, @PathVariable Long id, @RequestParam("image") MultipartFile imageFile, @RequestParam("name") String variationName, @RequestParam("description") String variationDescription) {
         String userRole = request.getHeader("X-User-Role");
 
         if ("ADMIN".equals(userRole)) {
-            Optional<Variation> optionalVariation = variationRepository.findById(id);
-            if (optionalVariation.isPresent()) {
-                Variation dbVariation = optionalVariation.get();
-                dbVariation.setName(variation.getName());
-                variationRepository.save(dbVariation);
-                return ResponseEntity.ok(dbVariation);
-            } else {
-                return ResponseEntity.notFound().build();
+            try {
+                // Save the image to a folder or a cloud storage service
+                String imageName = imageFile.getOriginalFilename();
+                String projectDir = System.getProperty("user.dir");
+                String imagePath = projectDir + "/images/" + imageName;
+                Path destination = Path.of(imagePath);
+                Files.copy(imageFile.getInputStream(), destination, StandardCopyOption.REPLACE_EXISTING);
+
+                // Find the existing Variation object
+                Optional<Variation> optionalVariation = variationRepository.findById(id);
+                if (optionalVariation.isPresent()) {
+                    Variation variation = optionalVariation.get();
+
+                    // Update the Variation details
+                    variation.setName(variationName);
+                    variation.setDescription(variationDescription);
+                    variation.setImageUrl(getImageUrl(request, imagePath)); // Set the image URL
+
+                    variationRepository.save(variation);
+                    return ResponseEntity.ok(variation);
+                } else {
+                    return ResponseEntity.notFound().build();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
             }
         } else {
             // Handle unauthorized access
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
-
     }
 
     @DeleteMapping("/{id}")

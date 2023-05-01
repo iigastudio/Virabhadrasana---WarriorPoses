@@ -11,6 +11,10 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
@@ -74,18 +78,23 @@ public class WarriorPosesController {
 
         if ("ADMIN".equals(userRole)) {
             try {
-                // Save the image to a folder or a cloud storage service
                 String imageName = imageFile.getOriginalFilename();
-                String imagePath = "src/main/resources/images/" + imageName;
-                Path destination = Path.of(imagePath);
-                Files.copy(imageFile.getInputStream(), destination, StandardCopyOption.REPLACE_EXISTING);
+                String projectDir = System.getProperty("user.dir");
+                String imagePath = projectDir + "/images/" + imageName;
+                File image = new File(imagePath);
+
+                // Save the image file
+                image.getParentFile().mkdirs(); // Create parent directories if they don't exist
+                image.createNewFile();
+                try (OutputStream outputStream = new FileOutputStream(image)) {
+                    outputStream.write(imageFile.getBytes());
+                }
 
                 // Create a new WarriorPose object and set the image path and name
                 WarriorPose warriorPose = new WarriorPose();
                 warriorPose.setName(poseName);
                 warriorPose.setDescription(description);
                 warriorPose.setImageUrl(getImageUrl(request, imagePath)); // Set the image URL
-
 
                 WarriorPose dbWarriorPose = warriorPoseRepository.save(warriorPose);
                 return ResponseEntity.ok(dbWarriorPose);
@@ -98,27 +107,48 @@ public class WarriorPosesController {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
     }
-        @PutMapping("/{id}")
-        public ResponseEntity<WarriorPose> updateWarriorPose(HttpServletRequest request, @PathVariable Long id, @RequestBody WarriorPose warriorPose) {
-            String userRole = request.getHeader("X-User-Role");
+    @PutMapping("/{id}")
+    public ResponseEntity<WarriorPose> updateWarriorPose(HttpServletRequest request, @PathVariable Long id, @RequestParam("image") MultipartFile imageFile, @RequestParam("name") String poseName, @RequestParam("description") String description) {
+        String userRole = request.getHeader("X-User-Role");
 
-            if ("ADMIN".equals(userRole)) {
+        if ("ADMIN".equals(userRole)) {
+            try {
+                String imageName = imageFile.getOriginalFilename();
+                String projectDir = System.getProperty("user.dir");
+                String imagePath = projectDir + "/images/" + imageName;
+                File image = new File(imagePath);
+
+                // Save the image file
+                image.getParentFile().mkdirs(); // Create parent directories if they don't exist
+                image.createNewFile();
+                try (OutputStream outputStream = new FileOutputStream(image)) {
+                    outputStream.write(imageFile.getBytes());
+                }
+
+                // Find the existing WarriorPose object
                 Optional<WarriorPose> optionalWarriorPose = warriorPoseRepository.findById(id);
                 if (optionalWarriorPose.isPresent()) {
-                    WarriorPose dbWarriorPose = optionalWarriorPose.get();
-                    dbWarriorPose.setName(warriorPose.getName());
-                    warriorPoseRepository.save(dbWarriorPose);
+                    WarriorPose warriorPose = optionalWarriorPose.get();
+
+                    // Update the WarriorPose attributes
+                    warriorPose.setName(poseName);
+                    warriorPose.setDescription(description);
+                    warriorPose.setImageUrl(getImageUrl(request, imagePath)); // Set the image URL
+
+                    WarriorPose dbWarriorPose = warriorPoseRepository.save(warriorPose);
                     return ResponseEntity.ok(dbWarriorPose);
                 } else {
                     return ResponseEntity.notFound().build();
                 }
-            } else {
-                // Handle unauthorized access
-                return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+            } catch (Exception e) {
+                e.printStackTrace();
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
             }
-
+        } else {
+            // Handle unauthorized access
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
-
+    }
         @DeleteMapping("/{id}")
         public ResponseEntity<?> deleteWarriorPose(HttpServletRequest request, @PathVariable Long id) {
             String userRole = request.getHeader("X-User-Role");

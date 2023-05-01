@@ -22,6 +22,6 @@ public class Variation {
     @JoinColumn(name = "WarriorPose_id", nullable = false)
     private WarriorPose warriorPose;
 
-    @Transient
+
     private String imageUrl; // New transient field for image URL
  }

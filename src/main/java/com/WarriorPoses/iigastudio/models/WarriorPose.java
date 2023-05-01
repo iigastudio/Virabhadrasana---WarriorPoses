@@ -21,6 +21,5 @@ public class WarriorPose {
     @OneToMany(mappedBy = "warriorPose")
     private Set<Variation> variations;
 
-    @Transient
     private String imageUrl; // New transient field for image URL
  }
