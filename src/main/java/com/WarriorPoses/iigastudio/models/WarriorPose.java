@@ -18,8 +18,8 @@ public class WarriorPose {
     private String name;
     private String description;
 
-    @OneToMany(mappedBy = "warriorPose")
+    @OneToMany(mappedBy = "warriorPose", cascade = CascadeType.ALL) // Add cascade type
     private Set<Variation> variations;
 
-    private String imageUrl; // New transient field for image URL
+    private String imageUrl;
  }

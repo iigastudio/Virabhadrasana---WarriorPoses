@@ -23,5 +23,5 @@ public class Variation {
     private WarriorPose warriorPose;
 
 
-    private String imageUrl; // New transient field for image URL
+    private String imageUrl;
  }
