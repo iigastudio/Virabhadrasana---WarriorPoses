@@ -73,10 +73,10 @@ public class WarriorPosesController {
     }
 
     @PostMapping("/")
-    public ResponseEntity<WarriorPose> createWarriorPose(HttpServletRequest request, @RequestParam("image") MultipartFile imageFile, @RequestParam("name") String poseName,@RequestParam("description") String description) {
+    public ResponseEntity<WarriorPose> createWarriorPose(HttpServletRequest request, @RequestParam("image") MultipartFile imageFile, @RequestParam("name") String poseName) {
         String userRole = request.getHeader("X-User-Role");
 
-        if ("ADMIN".equals(userRole)) {
+
             try {
                 String imageName = imageFile.getOriginalFilename();
                 String projectDir = System.getProperty("user.dir");
@@ -93,7 +93,7 @@ public class WarriorPosesController {
                 // Create a new WarriorPose object and set the image path and name
                 WarriorPose warriorPose = new WarriorPose();
                 warriorPose.setName(poseName);
-                warriorPose.setDescription(description);
+
                 warriorPose.setImageUrl(getImageUrl(request, imagePath)); // Set the image URL
 
                 WarriorPose dbWarriorPose = warriorPoseRepository.save(warriorPose);
@@ -102,16 +102,13 @@ public class WarriorPosesController {
                 e.printStackTrace();
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
             }
-        } else {
-            // Handle unauthorized access
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-        }
+
     }
     @PutMapping("/{id}")
-    public ResponseEntity<WarriorPose> updateWarriorPose(HttpServletRequest request, @PathVariable Long id, @RequestParam("image") MultipartFile imageFile, @RequestParam("name") String poseName, @RequestParam("description") String description) {
+    public ResponseEntity<WarriorPose> updateWarriorPose(HttpServletRequest request, @PathVariable Long id, @RequestParam("image") MultipartFile imageFile, @RequestParam("name") String poseName) {
         String userRole = request.getHeader("X-User-Role");
 
-        if ("ADMIN".equals(userRole)) {
+
             try {
                 String imageName = imageFile.getOriginalFilename();
                 String projectDir = System.getProperty("user.dir");
@@ -132,7 +129,7 @@ public class WarriorPosesController {
 
                     // Update the WarriorPose attributes
                     warriorPose.setName(poseName);
-                    warriorPose.setDescription(description);
+
                     warriorPose.setImageUrl(getImageUrl(request, imagePath)); // Set the image URL
 
                     WarriorPose dbWarriorPose = warriorPoseRepository.save(warriorPose);
@@ -144,16 +141,13 @@ public class WarriorPosesController {
                 e.printStackTrace();
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
             }
-        } else {
-            // Handle unauthorized access
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-        }
+
     }
         @DeleteMapping("/{id}")
         public ResponseEntity<?> deleteWarriorPose(HttpServletRequest request, @PathVariable Long id) {
-            String userRole = request.getHeader("X-User-Role");
 
-            if ("ADMIN".equals(userRole)) {
+
+
                 Optional<WarriorPose> optionalWarriorPose = warriorPoseRepository.findById(id);
                 if (optionalWarriorPose.isPresent()) {
                     warriorPoseRepository.delete(optionalWarriorPose.get());
@@ -161,10 +155,7 @@ public class WarriorPosesController {
                 } else {
                     return ResponseEntity.notFound().build();
                 }
-            } else {
-                // Handle unauthorized access
-                return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-            }
+
 
         }
 

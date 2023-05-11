@@ -16,7 +16,7 @@ public class WarriorPose {
     private Long id;
 
     private String name;
-    private String description;
+
 
     @OneToMany(mappedBy = "warriorPose", cascade = CascadeType.ALL) // Add cascade type
     private Set<Variation> variations;

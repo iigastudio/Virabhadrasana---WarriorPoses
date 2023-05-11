@@ -60,7 +60,7 @@ public class VariationsController {
         return imagePath.substring(imagePath.lastIndexOf("/") + 1);
     }
     @PostMapping("/{warriorPoseId}")
-    public ResponseEntity<Variation> createVariation(HttpServletRequest request, @PathVariable Long warriorPoseId, @RequestParam("image") MultipartFile imageFile,@RequestParam("name") String variationName,@RequestParam("description") String variationDescription) {
+    public ResponseEntity<Variation> createVariation(HttpServletRequest request, @PathVariable Long warriorPoseId, @RequestParam("image") MultipartFile imageFile,@RequestParam("name") String variationName) {
         String userRole = request.getHeader("X-User-Role");
 
         if ("ADMIN".equals(userRole)) {
@@ -75,7 +75,7 @@ public class VariationsController {
                 // Create a new Variation object and set the image path
                 Variation variation = new Variation();
                 variation.setName(variationName);
-                variation.setDescription(variationDescription);
+
                 variation.setImageUrl(getImageUrl(request, imagePath)); // Set the image URL
 
                 Optional<WarriorPose> optionalWarriorPose = warriorPoseRepository.findById(warriorPoseId);
@@ -101,10 +101,10 @@ public class VariationsController {
         }
     }
     @PutMapping("/{id}")
-    public ResponseEntity<Variation> updateVariation(HttpServletRequest request, @PathVariable Long id, @RequestParam("image") MultipartFile imageFile, @RequestParam("name") String variationName, @RequestParam("description") String variationDescription) {
+    public ResponseEntity<Variation> updateVariation(HttpServletRequest request, @PathVariable Long id, @RequestParam("image") MultipartFile imageFile, @RequestParam("name") String variationName ) {
         String userRole = request.getHeader("X-User-Role");
 
-        if ("ADMIN".equals(userRole)) {
+
             try {
                 // Save the image to a folder or a cloud storage service
                 String imageName = imageFile.getOriginalFilename();
@@ -120,7 +120,7 @@ public class VariationsController {
 
                     // Update the Variation details
                     variation.setName(variationName);
-                    variation.setDescription(variationDescription);
+
                     variation.setImageUrl(getImageUrl(request, imagePath)); // Set the image URL
 
                     variationRepository.save(variation);
@@ -132,17 +132,13 @@ public class VariationsController {
                 e.printStackTrace();
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
             }
-        } else {
-            // Handle unauthorized access
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-        }
+
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteVariation(HttpServletRequest request,@PathVariable Long id) {
         String userRole = request.getHeader("X-User-Role");
 
-        if ("ADMIN".equals(userRole)) {
             Optional<Variation> optionalVariation = variationRepository.findById(id);
             if (optionalVariation.isPresent()) {
                 variationRepository.delete(optionalVariation.get());
@@ -150,11 +146,7 @@ public class VariationsController {
             } else {
                 return ResponseEntity.notFound().build();
             }
-        } else {
-            // Handle unauthorized access
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 
-    }
 
 }
