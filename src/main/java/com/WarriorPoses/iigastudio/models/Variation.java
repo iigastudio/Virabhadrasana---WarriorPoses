@@ -18,7 +18,7 @@ public class Variation {
 
 
     @ManyToOne
-    @JsonIgnore
+
     @JoinColumn(name = "WarriorPose_id", nullable = false)
     private WarriorPose warriorPose;
 

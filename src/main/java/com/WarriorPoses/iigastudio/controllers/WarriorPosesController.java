@@ -20,6 +20,8 @@ import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.Optional;
 
+
+
 @RestController
 @RequestMapping("/warrior-poses")
 public class WarriorPosesController {
@@ -105,43 +107,44 @@ public class WarriorPosesController {
 
     }
     @PutMapping("/{id}")
-    public ResponseEntity<WarriorPose> updateWarriorPose(HttpServletRequest request, @PathVariable Long id, @RequestParam("image") MultipartFile imageFile, @RequestParam("name") String poseName) {
+    public ResponseEntity<WarriorPose> updateWarriorPose(HttpServletRequest request, @PathVariable Long id, @RequestParam(value = "image", required = false) MultipartFile imageFile, @RequestParam("name") String poseName) {
         String userRole = request.getHeader("X-User-Role");
 
+        try {
+            // Find the existing WarriorPose object
+            Optional<WarriorPose> optionalWarriorPose = warriorPoseRepository.findById(id);
+            if (optionalWarriorPose.isPresent()) {
+                WarriorPose warriorPose = optionalWarriorPose.get();
 
-            try {
-                String imageName = imageFile.getOriginalFilename();
-                String projectDir = System.getProperty("user.dir");
-                String imagePath = projectDir + "/images/" + imageName;
-                File image = new File(imagePath);
+                // Update the WarriorPose attributes
+                warriorPose.setName(poseName);
 
-                // Save the image file
-                image.getParentFile().mkdirs(); // Create parent directories if they don't exist
-                image.createNewFile();
-                try (OutputStream outputStream = new FileOutputStream(image)) {
-                    outputStream.write(imageFile.getBytes());
+                // Update the image only if it's provided
+                if (imageFile != null) {
+                    String imageName = imageFile.getOriginalFilename();
+                    String projectDir = System.getProperty("user.dir");
+                    String imagePath = projectDir + "/images/" + imageName;
+                    File image = new File(imagePath);
+
+                    // Save the image file
+                    image.getParentFile().mkdirs(); // Create parent directories if they don't exist
+                    image.createNewFile();
+                    try (OutputStream outputStream = new FileOutputStream(image)) {
+                        outputStream.write(imageFile.getBytes());
+                    }
+
+                    warriorPose.setImageUrl(getImageUrl(request, imagePath)); // Set the new image URL
                 }
 
-                // Find the existing WarriorPose object
-                Optional<WarriorPose> optionalWarriorPose = warriorPoseRepository.findById(id);
-                if (optionalWarriorPose.isPresent()) {
-                    WarriorPose warriorPose = optionalWarriorPose.get();
-
-                    // Update the WarriorPose attributes
-                    warriorPose.setName(poseName);
-
-                    warriorPose.setImageUrl(getImageUrl(request, imagePath)); // Set the image URL
-
-                    WarriorPose dbWarriorPose = warriorPoseRepository.save(warriorPose);
-                    return ResponseEntity.ok(dbWarriorPose);
-                } else {
-                    return ResponseEntity.notFound().build();
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+                WarriorPose dbWarriorPose = warriorPoseRepository.save(warriorPose);
+                return ResponseEntity.ok(dbWarriorPose);
+            } else {
+                return ResponseEntity.notFound().build();
             }
-
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
         @DeleteMapping("/{id}")
         public ResponseEntity<?> deleteWarriorPose(HttpServletRequest request, @PathVariable Long id) {

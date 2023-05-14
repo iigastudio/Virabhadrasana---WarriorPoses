@@ -61,9 +61,9 @@ public class VariationsController {
     }
     @PostMapping("/{warriorPoseId}")
     public ResponseEntity<Variation> createVariation(HttpServletRequest request, @PathVariable Long warriorPoseId, @RequestParam("image") MultipartFile imageFile,@RequestParam("name") String variationName) {
-        String userRole = request.getHeader("X-User-Role");
 
-        if ("ADMIN".equals(userRole)) {
+
+
             try {
                 // Save the image to a folder or a cloud storage service
                 String imageName = imageFile.getOriginalFilename();
@@ -95,11 +95,8 @@ public class VariationsController {
                 e.printStackTrace();
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
             }
-        } else {
-            // Handle unauthorized access
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
-    }
+
     @PutMapping("/{id}")
     public ResponseEntity<Variation> updateVariation(HttpServletRequest request, @PathVariable Long id, @RequestParam("image") MultipartFile imageFile, @RequestParam("name") String variationName ) {
         String userRole = request.getHeader("X-User-Role");

@@ -1,5 +1,6 @@
 package com.WarriorPoses.iigastudio.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -18,7 +19,10 @@ public class WarriorPose {
     private String name;
 
 
+
+
     @OneToMany(mappedBy = "warriorPose", cascade = CascadeType.ALL) // Add cascade type
+    @JsonIgnore
     private Set<Variation> variations;
 
     private String imageUrl;
