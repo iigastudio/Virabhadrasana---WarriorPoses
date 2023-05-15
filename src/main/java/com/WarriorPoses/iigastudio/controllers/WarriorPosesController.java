@@ -1,5 +1,6 @@
 package com.WarriorPoses.iigastudio.controllers;
 
+import com.WarriorPoses.iigastudio.models.Variation;
 import com.WarriorPoses.iigastudio.models.WarriorPose;
 import com.WarriorPoses.iigastudio.repositories.WarriorPoseRepository;
 import jakarta.servlet.http.HttpServletRequest;
@@ -18,8 +19,9 @@ import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
+import java.util.List;
 import java.util.Optional;
-
+import java.util.Set;
 
 
 @RestController
@@ -46,9 +48,19 @@ public class WarriorPosesController {
 
     }
 
-        @GetMapping("/search/variation/{keyword}")
+    @GetMapping("/search/variation/{keyword}")
     public Optional<WarriorPose> searchWarriorPoseByVariationName(@PathVariable String keyword) {
         return warriorPoseRepository.findByVariationNameIgnoreCaseContaining(keyword);
+    }
+
+    @GetMapping("/variations/{id}")
+    public ResponseEntity<Set<Variation>> searchWarriorPoseByVariationName(@PathVariable Long id) {
+        Optional<WarriorPose> warriorPose = warriorPoseRepository.findById(id);
+        if (warriorPose.isPresent()) {
+            return ResponseEntity.ok(warriorPose.get().getVariations());
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
     @GetMapping("/{id}")
         public ResponseEntity<WarriorPose> getWarriorPoseById(@PathVariable Long id) {

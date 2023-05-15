@@ -98,39 +98,45 @@ public class VariationsController {
         }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Variation> updateVariation(HttpServletRequest request, @PathVariable Long id, @RequestParam("image") MultipartFile imageFile, @RequestParam("name") String variationName ) {
+    public ResponseEntity<Variation> updateVariation(HttpServletRequest request, @PathVariable Long id, @RequestParam(value = "image", required = false) MultipartFile imageFile, @RequestParam("name") String variationName) {
         String userRole = request.getHeader("X-User-Role");
 
+        try {
+            String imageName = null;
+            String imagePath = null;
 
-            try {
-                // Save the image to a folder or a cloud storage service
-                String imageName = imageFile.getOriginalFilename();
+            if (imageFile != null && !imageFile.isEmpty()) {
+                // Save the new image to a folder or a cloud storage service
+                imageName = imageFile.getOriginalFilename();
                 String projectDir = System.getProperty("user.dir");
-                String imagePath = projectDir + "/images/" + imageName;
+                imagePath = projectDir + "/images/" + imageName;
                 Path destination = Path.of(imagePath);
                 Files.copy(imageFile.getInputStream(), destination, StandardCopyOption.REPLACE_EXISTING);
-
-                // Find the existing Variation object
-                Optional<Variation> optionalVariation = variationRepository.findById(id);
-                if (optionalVariation.isPresent()) {
-                    Variation variation = optionalVariation.get();
-
-                    // Update the Variation details
-                    variation.setName(variationName);
-
-                    variation.setImageUrl(getImageUrl(request, imagePath)); // Set the image URL
-
-                    variationRepository.save(variation);
-                    return ResponseEntity.ok(variation);
-                } else {
-                    return ResponseEntity.notFound().build();
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
             }
 
+            // Find the existing Variation object
+            Optional<Variation> optionalVariation = variationRepository.findById(id);
+            if (optionalVariation.isPresent()) {
+                Variation variation = optionalVariation.get();
+
+                // Update the Variation details
+                variation.setName(variationName);
+
+                if (imagePath != null) {
+                    variation.setImageUrl(getImageUrl(request, imagePath)); // Set the image URL
+                }
+
+                variationRepository.save(variation);
+                return ResponseEntity.ok(variation);
+            } else {
+                return ResponseEntity.notFound().build();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
+
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteVariation(HttpServletRequest request,@PathVariable Long id) {

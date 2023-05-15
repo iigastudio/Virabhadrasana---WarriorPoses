@@ -27,7 +27,7 @@ public class WarriorPosesApplication implements CommandLineRunner {
 		WarriorPose warrior1 = new WarriorPose();
 		warrior1.setName("Virabhadrasana I");
 
-		warrior1.setImageUrl("http://localhost:8090/images/Virabhadrasana1.jpg");
+		warrior1.setImageUrl("http://localhost:8090/images/Virabhadrasana1.png");
 
 		Variation var1 = new Variation();
 		var1.setName("Variation1 for Virabhadrasana1");
@@ -51,7 +51,7 @@ public class WarriorPosesApplication implements CommandLineRunner {
 		WarriorPose warrior2 = new WarriorPose();
 		warrior2.setName("Virabhadrasana II");
 
-		warrior2.setImageUrl("http://localhost:8090/images/Virabhadrasana2.jpg");
+		warrior2.setImageUrl("http://localhost:8090/images/Virabhadrasana2.png");
 
 
 		Variation var2 = new Variation();
@@ -74,7 +74,7 @@ public class WarriorPosesApplication implements CommandLineRunner {
 		WarriorPose warrior3 = new WarriorPose();
 		warrior3.setName("Virabhadrasana III");
 
-		warrior3.setImageUrl("http://localhost:8090/images/Virabhadrasana3.jpg");
+		warrior3.setImageUrl("http://localhost:8090/images/Virabhadrasana3.png");
 
 
 		Variation var3 = new Variation();
