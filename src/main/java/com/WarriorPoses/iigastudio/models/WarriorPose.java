@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.Set;
+import java.util.List;
 
 @Entity
 @Getter
@@ -23,7 +23,7 @@ public class WarriorPose {
 
     @OneToMany(mappedBy = "warriorPose", cascade = CascadeType.ALL) // Add cascade type
     @JsonIgnore
-    private Set<Variation> variations;
+    private List<Variation> variations;
 
     private String imageUrl;
  }

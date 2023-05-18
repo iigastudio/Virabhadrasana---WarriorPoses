@@ -8,20 +8,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.StandardCopyOption;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 
 @RestController
@@ -54,9 +47,10 @@ public class WarriorPosesController {
     }
 
     @GetMapping("/variations/{id}")
-    public ResponseEntity<Set<Variation>> searchWarriorPoseByVariationName(@PathVariable Long id) {
+    public ResponseEntity<List<Variation>> searchWarriorPoseByVariationName(@PathVariable Long id) {
         Optional<WarriorPose> warriorPose = warriorPoseRepository.findById(id);
         if (warriorPose.isPresent()) {
+
             return ResponseEntity.ok(warriorPose.get().getVariations());
         } else {
             return ResponseEntity.notFound().build();
